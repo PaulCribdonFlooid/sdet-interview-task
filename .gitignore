@@ -24,3 +24,6 @@ hs_err_pid*
 
 #intelliJ
 .idea/*
+
+#target dir
+target/*
