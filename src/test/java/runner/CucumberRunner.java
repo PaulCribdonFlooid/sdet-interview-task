@@ -5,10 +5,12 @@ import io.cucumber.junit.CucumberOptions;
 import org.junit.runner.RunWith;
 
 @RunWith(Cucumber.class)
-@CucumberOptions(features = "classpath:features",
-        glue = {"stepdefinitions", "hooks"},
-        tags = {"@test"},
-        plugin = {"pretty"}
+@CucumberOptions(
+        strict = true,
+        features = "classpath:features",
+        plugin = {"pretty",
+                "html:target/cucumber-html"},
+        glue = {"stepdefinitions", "hooks"}
 )
 
 public class CucumberRunner

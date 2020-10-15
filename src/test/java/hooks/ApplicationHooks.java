@@ -6,8 +6,6 @@ import utils.BrowserFactory;
 
 public class ApplicationHooks
 {
-
-
   @After()
   public void after()
   {
