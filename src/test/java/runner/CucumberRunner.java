@@ -8,8 +8,7 @@ import org.junit.runner.RunWith;
 @CucumberOptions(
         strict = true,
         features = "classpath:features",
-        plugin = {"pretty",
-                "html:target/cucumber-html",
+        plugin = {"html:target/cucumber-html",
                 "json:target/report.json"},
         glue = {"stepdefinitions", "hooks"}
 )
