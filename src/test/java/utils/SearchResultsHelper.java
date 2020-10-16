@@ -6,13 +6,9 @@ import org.openqa.selenium.WebElement;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class SearchResultsHelper
 {
-  private static final Logger LOGGER = Logger.getLogger(SearchResultsHelper.class.getName());
-
   private static final String GOOGLE_RESULTS_CLASS = "g";
   private static final String GOOGLE_CONSENT_FORM_ID = "cnsw";
   private static final String GOOGLE_CONSENT_AGREE_ID = "introAgreeButton";
@@ -31,26 +27,31 @@ public class SearchResultsHelper
     }
   }
 
-  public static void loadNextPageOfResults(WebDriver driver)
-  {
-    WebElement nextPageElement = driver.findElement(By.id(GOOGLE_NEXT_PAGE_ID));
-    String nextPageURL = nextPageElement.getAttribute("href");
-    driver.navigate().to(nextPageURL);
-  }
-
   public static List<WebElement> getResults(WebDriver driver)
   {
     return driver.findElements(By.className(GOOGLE_RESULTS_CLASS));
   }
 
-  public static List<String> getLinkFromResults(List<WebElement> searchResults)
+  public static List<String> getTopWebsites(int numberOfSites, WebDriver driver)
   {
-    List<String> links = new ArrayList<>();
-    for (WebElement result : searchResults)
+    List<String> websiteList = new ArrayList<>();
+    List<WebElement> results = null;
+
+    while (websiteList.size() < numberOfSites)
     {
-      links.add(result.findElement(By.tagName("a")).getAttribute("href"));
+      if (results != null)
+      {
+        SearchResultsHelper.loadNextPageOfResults(driver);
+      }
+
+      results = SearchResultsHelper.getResults(driver);
+      for (WebElement searchResult : results)
+      {
+        websiteList.add(getLinkFromResult(searchResult));
+      }
     }
-    return links;
+
+    return websiteList.subList(0,numberOfSites);
   }
 
   public static int numberOfMatchingResults(List<WebElement> searchResults, String expectedResult)
@@ -62,11 +63,22 @@ public class SearchResultsHelper
       resultText = result.getText();
       if (textContainsResult(resultText, expectedResult))
       {
-        LOGGER.log(Level.INFO, "\"" + resultText + "\" contains \"" + expectedResult + "\"");
         matches++;
       }
     }
     return matches;
+  }
+
+  private static void loadNextPageOfResults(WebDriver driver)
+  {
+    WebElement nextPageElement = driver.findElement(By.id(GOOGLE_NEXT_PAGE_ID));
+    String nextPageURL = nextPageElement.getAttribute("href");
+    driver.navigate().to(nextPageURL);
+  }
+
+  private static String getLinkFromResult (WebElement searchResult)
+  {
+    return searchResult.findElement(By.tagName("a")).getAttribute("href");
   }
 
   private static boolean textContainsResult(String text, String expectedResult)
