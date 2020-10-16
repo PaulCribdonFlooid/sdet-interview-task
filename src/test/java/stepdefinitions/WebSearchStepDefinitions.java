@@ -5,15 +5,18 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.junit.Assert;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import utils.BrowserFactory;
 import utils.SearchResultsHelper;
 
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class WebSearchStepDefinitions
 {
   private static final String GOOGLE_SEARCH_URL =  "https://www.google.com/search?q=";
+
+  private static final Logger LOGGER = Logger.getLogger(WebSearchStepDefinitions.class.getName());
 
   private WebDriver driver;
 
@@ -59,5 +62,11 @@ public class WebSearchStepDefinitions
       Assert.assertTrue("Page " + website + " doesn't contain " + expectedResult,
               pageSource.contains(expectedResult));
     }
+
+    StringBuilder outputListOfWebsites = new StringBuilder();
+    outputListOfWebsites.append("The following ").append(websiteList.size())
+            .append(" websites all contain ").append(expectedResult).append(":\n");
+    websiteList.forEach(website -> outputListOfWebsites.append("\t").append(website).append("\n"));
+    LOGGER.log(Level.INFO, outputListOfWebsites.toString());
   }
 }
